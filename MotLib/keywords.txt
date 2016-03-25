@@ -1,2 +1,0 @@
-MotLib	KEYWORD1
-init  KEYWORD2
