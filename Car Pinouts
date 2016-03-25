@@ -1,0 +1,9 @@
+Arduino Uno
+2-Encoder
+4-Bluetooth RX
+5-Bluetooth TX
+6-Steering Servo Signal
+9-Button
+10-GPS RX
+SDA-Compass SDA
+SCL-Compass SDL
