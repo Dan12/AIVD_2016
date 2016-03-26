@@ -24,7 +24,11 @@ class AV4Wheel2{
         // method to get interupt ticks
         int getInterrupTicks();
         void testInterrupt();
-        void createInterupt(int i);
+        
+        // Setup Newping Sensor
+        void initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance);
+        // Get Newping ping in inches
+        int ping_in();
         
     private:
         int _motorDirn;     // Motor dirn pin
@@ -36,7 +40,6 @@ class AV4Wheel2{
         volatile int _interruptTickCounter; // interup ticks counter
         
         // Newping Functions
-        int _ping_in();
         uint8_t _triggerBit;
         uint8_t _echoBit;
         volatile uint8_t *_triggerOutput;
@@ -45,7 +48,7 @@ class AV4Wheel2{
         boolean _usingInterruptEncoder;
         unsigned int _maxEchoTime;
         unsigned long _max_time;
-        boolean ping_trigger();
+        boolean _ping_trigger();
 };
 
 #endif

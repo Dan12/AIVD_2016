@@ -4,7 +4,7 @@
 **/
 
 #include "Arduino.h"
-#include "AV4Wheel.h"
+#include "AV4Wheel2.h"
 
 #define TICKS_PER_ROTATION 90   // Encoder value for the number of measured ticks per rotation
 
@@ -35,12 +35,6 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
     _steeringServo.attach(_servoPin);
     
     _interruptTickCounter = 0;
-}
-
-// function to create an interrupt
-void AV4Wheel2::createInterupt(int i){
-    // Attach interrupt on pin 0(2) or 1(3)
-    attachInterrupt(i, interrupEncoderFunc, RISING);
 }
 
 // Interupt function to be linked in the main program
@@ -92,15 +86,16 @@ void AV4Wheel2::initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_dist
     #endif
 }
 
-int AV4Wheel2::_ping_in(){
-    if (!ping_trigger()) return NO_ECHO;                // Trigger a ping, if it returns false, return NO_ECHO to the calling function.
+// Ping in inches
+int AV4Wheel2::ping_in(){
+    if (!_ping_trigger()) return NO_ECHO;                // Trigger a ping, if it returns false, return NO_ECHO to the calling function.
     while (*_echoInput & _echoBit)                      // Wait for the ping echo.
         if (micros() > _max_time) return NO_ECHO;       // Stop the loop and return NO_ECHO (false) if we're beyond the set maximum distance.
     int uS = (micros() - (_max_time - _maxEchoTime) - 5); // Calculate ping time, 5uS of overhead.
     return uS / US_ROUNDTRIP_IN; 
 }
 
-boolean AV4Wheel2::ping_trigger() {
+boolean AV4Wheel2::_ping_trigger() {
     #if DISABLE_ONE_PIN != true
         *_triggerMode |= _triggerBit;    // Set trigger pin to output.
     #endif

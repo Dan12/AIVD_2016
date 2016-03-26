@@ -1,9 +1,9 @@
 //include Servo and 4WheelDrive Library
 #include <Servo.h>
-#include <AV4Wheel.h>
+#include <AV4Wheel2.h>
 
 //Creating 4WheelDrive object
-AV4Wheel test;
+AV4Wheel2 test;
 
 boolean otherTest = false;
 
@@ -14,9 +14,7 @@ void setup(){
     Serial.begin(9600);
     
     // Attach interrupt on pin 2
-    // attachInterrupt(0, test.interrupEncoderFunc, RISING);
-    // attachInterrupt(0, interruptFunc, RISING);
-    test.createInterupt(0);
+    attachInterrupt(0, interruptFunc, RISING);
 }
 
 void loop(){
@@ -31,7 +29,7 @@ void loop(){
     }
 }
 
-// backup
+// need this because interrupt function has to be of void(*)()
 void interruptFunc() {
     test.interrupEncoderFunc();
 }
