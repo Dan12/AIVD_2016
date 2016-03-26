@@ -30,7 +30,6 @@ class AV4Wheel{
         int _motorSpeed;    // Motor Speed pin
         int _encoderPin;    // Encoder pin
         int _servoPin;      // Servo Pin
-        int _encoderPrevVal;    // Encoder Pin Prev Value
         float _wheelCircumfrence;   // Wheel Circumfrence
         Servo _steeringServo;   // Front servo object
         volatile int _interruptTickCounter; // interup ticks counter

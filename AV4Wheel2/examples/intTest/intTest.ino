@@ -15,6 +15,7 @@ void setup(){
     
     // Attach interrupt on pin 2
     // attachInterrupt(0, test.interrupEncoderFunc, RISING);
+    // attachInterrupt(0, interruptFunc, RISING);
     test.createInterupt(0);
 }
 

@@ -25,8 +25,6 @@ void AV4Wheel::init(int md, int ms, int ep, int sp, float wc){
     _encoderPin = ep;
     _servoPin = sp;
     
-    _encoderPrevVal = LOW;
-    
     _wheelCircumfrence = wc;
     
     pinMode(_motorDirn,OUTPUT);
@@ -39,8 +37,7 @@ void AV4Wheel::init(int md, int ms, int ep, int sp, float wc){
     _interruptTickCounter = 0;
 }
 
-
-
+// function to create an interrupt
 void AV4Wheel::createInterupt(int i){
     // Attach interrupt on pin 0(2) or 1(3)
     attachInterrupt(i, interrupEncoderFunc, RISING);
