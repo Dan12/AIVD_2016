@@ -1,21 +1,22 @@
 /*
-  AV4Wheel-4Wheel Drive library for AIVD
+  AV4Wheel2-4 Wheel Drive library for AIVD
   Daniel Weber 2016
 */
 
 // Make sure that AV4Wheel has not bee defined yet
-#ifndef AV4Wheel_h
-#define AV4Wheel_h
+#ifndef AV4Wheel2_h
+#define AV4Wheel2_h
 
 // Include servo for access to servo library
 // Note: only core functions can be included in the library like this
 #include "Arduino.h"
 #include "Servo.h"
 
-class AV4Wheel{
+class AV4Wheel2{
     public:
-        AV4Wheel();
+        AV4Wheel2();
         void init(int md, int ms, int ep, int sp, float wc);
+        //void rampMotion(int dirn)
         
         // Interupt functions
         // interupt function to be passed in main program

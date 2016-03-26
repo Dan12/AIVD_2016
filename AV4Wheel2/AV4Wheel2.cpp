@@ -1,5 +1,5 @@
 /*
- * AV4Wheel-4Wheel Drive library for AIVD
+ * AV4Wheel2-4 Wheel Drive library for AIVD
  * Daniel Weber 2016
 **/
 
@@ -8,7 +8,7 @@
 
 #define TICKS_PER_ROTATION 90   // Encoder value for the number of measured ticks per rotation
 
-AV4Wheel::AV4Wheel(){}
+AV4Wheel2::AV4Wheel2(){}
 
 /*
 AV4 Wheel Init function
@@ -18,7 +18,7 @@ ep-encoder pin
 sp-servo pin
 wc-wheel circumfrence
 */
-void AV4Wheel::init(int md, int ms, int ep, int sp, float wc){
+void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
     _motorDirn = md;
     _motorSpeed = ms;
 
@@ -38,23 +38,23 @@ void AV4Wheel::init(int md, int ms, int ep, int sp, float wc){
 }
 
 // function to create an interrupt
-void AV4Wheel::createInterupt(int i){
+void AV4Wheel2::createInterupt(int i){
     // Attach interrupt on pin 0(2) or 1(3)
     attachInterrupt(i, interrupEncoderFunc, RISING);
 }
 
 // Interupt function to be linked in the main program
-void AV4Wheel::interrupEncoderFunc(){
+void AV4Wheel2::interrupEncoderFunc(){
     _interruptTickCounter++;
 }
 
 // get the Interupt ticks
-int AV4Wheel::getInterrupTicks(){
+int AV4Wheel2::getInterrupTicks(){
     return _interruptTickCounter;
 }
 
 // Test the encoder interrupt function
-void AV4Wheel::testInterrupt(){
+void AV4Wheel2::testInterrupt(){
     _interruptTickCounter = 0;
     while(_interruptTickCounter < 4*TICKS_PER_ROTATION){
         Serial.print(_interruptTickCounter);
@@ -76,7 +76,7 @@ void AV4Wheel::testInterrupt(){
 // #define PING_MEDIAN_DELAY 29    // Millisecond delay between pings in the ping_median method.
 
 // Init method, set current ultrasonic trigger and echo pin
-void AV4Wheel::initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance) {
+void AV4Wheel2::initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance) {
     _triggerBit = digitalPinToBitMask(trigger_pin); // Get the port register bitmask for the trigger pin.
     _echoBit = digitalPinToBitMask(echo_pin);       // Get the port register bitmask for the echo pin.
 
@@ -92,7 +92,7 @@ void AV4Wheel::initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_dista
     #endif
 }
 
-int AV4Wheel::_ping_in(){
+int AV4Wheel2::_ping_in(){
     if (!ping_trigger()) return NO_ECHO;                // Trigger a ping, if it returns false, return NO_ECHO to the calling function.
     while (*_echoInput & _echoBit)                      // Wait for the ping echo.
         if (micros() > _max_time) return NO_ECHO;       // Stop the loop and return NO_ECHO (false) if we're beyond the set maximum distance.
@@ -100,7 +100,7 @@ int AV4Wheel::_ping_in(){
     return uS / US_ROUNDTRIP_IN; 
 }
 
-boolean AV4Wheel::ping_trigger() {
+boolean AV4Wheel2::ping_trigger() {
     #if DISABLE_ONE_PIN != true
         *_triggerMode |= _triggerBit;    // Set trigger pin to output.
     #endif
