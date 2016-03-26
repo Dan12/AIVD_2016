@@ -15,6 +15,8 @@ void setup(){
     
     // Attach interrupt on pin 2
     attachInterrupt(0, interruptFunc, RISING);
+    
+    test.initCompass(getHeading);
 }
 
 void loop(){
@@ -27,6 +29,11 @@ void loop(){
         // test interrupt function in main program
         Serial.println(test.getInterrupTicks());
     }
+}
+
+int16_t* getHeading(){
+  int16_t arr[] = {140,150,160};
+  return arr;
 }
 
 // need this because interrupt function has to be of void(*)()
