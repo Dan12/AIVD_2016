@@ -38,12 +38,16 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
 }
 
 void AV4Wheel2::initCompass(int16_t* (*func)()){
+	// create array by getting result of the function call
+	// turn pointer of result to actual value and use it to initialze the array
 	int16_t temp[3] = {*(*func)()};
 	Serial.println(temp[0]);
 	Serial.println(temp[1]);
+	// store the heading function
 	_headingFunc = func;
 }
 
+// Get the heading from the heading function
 void AV4Wheel2::_getHeading(){
 	_compassHeading = {*(*_headingFunc)()};
 }

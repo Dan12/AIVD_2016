@@ -42,7 +42,7 @@ class AV4Wheel2{
         Servo _steeringServo;   // Front servo object
         volatile int _interruptTickCounter; // interup ticks counter
         int16_t _compassHeading;	// Compass heading
-        int16_t* (*_headingFunc)();	// Compass heading function
+        int16_t* (*_headingFunc)();	// Pointer to compass heading function that returns int16_t pointer
 		void _getHeading();	// Library function to call compass heading function and store the result
         
         // Newping Functions
