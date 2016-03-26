@@ -18,6 +18,9 @@ class AV4Wheel2{
         void init(int md, int ms, int ep, int sp, float wc);
         //void rampMotion(int dirn)
         
+        // Compass functions
+        void initCompass(int16_t* (*func)());
+        
         // Interupt functions
         // interupt function to be passed in main program
         void interrupEncoderFunc();
@@ -38,6 +41,9 @@ class AV4Wheel2{
         float _wheelCircumfrence;   // Wheel Circumfrence
         Servo _steeringServo;   // Front servo object
         volatile int _interruptTickCounter; // interup ticks counter
+        int16_t _compassHeading;	// Compass heading
+        int16_t* (*_headingFunc)();	// Compass heading function
+		void _getHeading();	// Library function to call compass heading function and store the result
         
         // Newping Functions
         uint8_t _triggerBit;

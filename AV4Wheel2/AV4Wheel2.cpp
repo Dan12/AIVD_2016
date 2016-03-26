@@ -37,6 +37,17 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
     _interruptTickCounter = 0;
 }
 
+void AV4Wheel2::initCompass(int16_t* (*func)()){
+	int16_t temp[3] = {*(*func)()};
+	Serial.println(temp[0]);
+	Serial.println(temp[1]);
+	_headingFunc = func;
+}
+
+void AV4Wheel2::_getHeading(){
+	_compassHeading = {*(*_headingFunc)()};
+}
+
 // Interupt function to be linked in the main program
 void AV4Wheel2::interrupEncoderFunc(){
     _interruptTickCounter++;
