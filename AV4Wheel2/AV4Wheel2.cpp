@@ -7,6 +7,9 @@
 #include "AV4Wheel2.h"
 
 #define TICKS_PER_ROTATION 90   // Encoder value for the number of measured ticks per rotation
+#define DEFAULT_SPEED 125	// default car speed
+#define RAMP_DELAY 30	// milliseconds of ramp speed delay
+
 
 AV4Wheel2::AV4Wheel2(){}
 
@@ -37,6 +40,110 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
     _interruptTickCounter = 0;
 }
 
+// Movement code
+
+// general move
+void AV4Wheel2::_genMove(int dirn, int speed){
+	// go in the specified direction
+	digitalWrite(_motorDirn, dirn);
+	
+	// go at the default speed if no speed specified (-1)
+	analogWrite(_motorSpeed, speed == -1 ? DEFAULT_SPEED : speed);
+}
+
+// ramp motion
+void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle){
+	_steeringServo.write(servoAngle);
+	
+	// TODO: log PID in loops
+	
+	// ramp up
+	if(startSpeed < finalSpeed)
+		for(int i = 0; i <= finalSpeed; i++){
+			_genMove(dirn, i);
+			delay(RAMP_DELAY);
+		}
+	// ramp down
+	else
+		for(int i = startSpeed; i >= finalSpeed; i--){
+			_genMove(dirn, i);
+			delay(RAMP_DELAY);
+		}
+}
+
+void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
+	// reset tick counter
+	_interruptTickCounter = 0;
+	
+	// set servo angle
+	_steeringServo.write(servoAngle);
+	
+	// calculate total ticks by dist/(dist/rotation)*ticks/rotation
+	int totalTicks = dist/_wheelCircumfrence*TICKS_PER_ROTATION;
+	
+	// TODO: adjust heading using PID
+	
+	// while we still have ticks to go, loop
+	while(_interruptTickCounter < totalTicks){
+		_genMove(dirn,speed);
+	}
+}
+
+// move until ultrasonic triggered
+// move at the speed and in the dirn, if ultraTrigger == 1, move until ultraSonic is < ultraDist, visa versa
+void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger){
+	_steeringServo.write(servoAngle);
+	_genMove(dirn, speed);
+	
+	// TODO: make servo adjustments for PID
+	
+	// trigger when object closer than ultraDist
+	if(ultraTrigger == 1){
+		while(ping_in() > ultraDist){
+			// minimum delay between pings
+			delay(30);
+		}
+	}
+	else{
+		while(ping_in() < ultraDist){
+			// minimum delay between pings
+			delay(30);
+		}
+	}
+}
+
+// PID stuff
+// set the PID variables
+void AV4Wheel2::initPID(){
+	
+}
+
+// start PID logging and reset PID variables
+void AV4Wheel2::startPID(){
+	_pidStartTime = micros();
+}
+
+// record PID data for current time
+void AV4Wheel2::_logPID(){
+	
+}
+
+void AV4Wheel2::setPIDHeading(int16_t dirn){
+	// Might have to take the integral of compass heading w.r.t. time to get actual PID integral
+	// position is the integral of compass heading because error grows at constant rate if heading is off
+}
+
+// get servo adjustment from PID
+int AV4Wheel2::_getAdjustment(){
+	
+}
+
+// adjust servo based on base angle for serve
+void AV4Wheel2::_adjustServo(int baseAngle){
+	
+}
+
+// compass code
 void AV4Wheel2::initCompass(int16_t* (*func)()){
 	// create array by getting result of the function call
 	// turn pointer of result to actual value and use it to initialze the array
@@ -51,6 +158,8 @@ void AV4Wheel2::initCompass(int16_t* (*func)()){
 void AV4Wheel2::_getHeading(){
 	_compassHeading = {*(*_headingFunc)()};
 }
+
+// Interrupt code
 
 // Interupt function to be linked in the main program
 void AV4Wheel2::interrupEncoderFunc(){

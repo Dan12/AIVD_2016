@@ -16,10 +16,18 @@ class AV4Wheel2{
     public:
         AV4Wheel2();
         void init(int md, int ms, int ep, int sp, float wc);
-        //void rampMotion(int dirn)
+        void rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle);
+        void moveDist(int dist, int dirn, int speed, int servoAngle);
+        void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
+        
+        //Public PID functions
+        void initPID();
+        void startPID();
         
         // Compass functions
         void initCompass(int16_t* (*func)());
+        // set PID heading
+        void setPIDHeading(int16_t dirn);
         
         // Interupt functions
         // interupt function to be passed in main program
@@ -44,6 +52,15 @@ class AV4Wheel2{
         int16_t _compassHeading;	// Compass heading
         int16_t* (*_headingFunc)();	// Pointer to compass heading function that returns int16_t pointer
 		void _getHeading();	// Library function to call compass heading function and store the result
+        
+        // movement functions
+        void _genMove(int dirn, int speed);
+        
+        // PID variables and methods
+        void _logPID();
+        int _getAdjustment();
+        int _pidStartTime;
+        void _adjustServo(int baseAngle);
         
         // Newping Functions
         uint8_t _triggerBit;
