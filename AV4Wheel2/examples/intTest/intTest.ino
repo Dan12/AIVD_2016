@@ -5,7 +5,7 @@
 //Creating 4WheelDrive object
 AV4Wheel2 test;
 
-boolean otherTest = false;
+boolean otherTest = true;
 
 void setup(){
     //Parameters: Motor dirn pin, Motor speed pin, Encoder pin, Steering Servo pin, Wheel Circumfrenc (in inches)

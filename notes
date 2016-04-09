@@ -2,3 +2,5 @@ Compass Library:
 https://github.com/pololu/lsm303-arduino
 gps reciever (use Software serial with rx = to tx, only incoming data):
 https://www.sparkfun.com/products/13740
+Software I2C:
+http://playground.arduino.cc/Main/SoftwareI2CLibrary
