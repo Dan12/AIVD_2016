@@ -1,4 +1,4 @@
-/*
+	/*
   AV4Wheel2-4 Wheel Drive library for AIVD
   Daniel Weber 2016
 */
@@ -19,6 +19,7 @@ class AV4Wheel2{
         void rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle);
         void moveDist(int dist, int dirn, int speed, int servoAngle);
         void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
+        void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, int16_t gotoHeading);
         
         //Public PID functions
         void initPID();
@@ -26,7 +27,7 @@ class AV4Wheel2{
         
         // Compass functions
         void initCompass(int16_t* (*func)());
-        // set PID heading
+        // set PID desired heading
         void setPIDHeading(int16_t dirn);
         
         // Interupt functions
@@ -35,6 +36,7 @@ class AV4Wheel2{
         // method to get interupt ticks
         int getInterrupTicks();
         void testInterrupt();
+        void resetInterruptTicks();
         
         // Setup Newping Sensor
         void initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance);
@@ -59,8 +61,13 @@ class AV4Wheel2{
         // PID variables and methods
         void _logPID();
         int _getAdjustment();
-        int _pidStartTime;
+        int _pidPrevTime;
         void _adjustServo(int baseAngle);
+        float _PIDIntegral;
+        float _PIDDerivative;
+        int _prevPoint;
+        int16_t _desiredDirn;
+        int _getNextPositionPoint(int timeGap);
         
         // Newping Functions
         uint8_t _triggerBit;

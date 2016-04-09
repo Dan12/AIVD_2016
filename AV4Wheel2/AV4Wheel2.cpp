@@ -37,7 +37,7 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
     
     _steeringServo.attach(_servoPin);
     
-    _interruptTickCounter = 0;
+    resetInterruptTicks();
 }
 
 // Movement code
@@ -71,9 +71,10 @@ void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAn
 		}
 }
 
+// move a specific distance with the specified speed, dirn, and servo angle
 void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
 	// reset tick counter
-	_interruptTickCounter = 0;
+	resetInterruptTicks();
 	
 	// set servo angle
 	_steeringServo.write(servoAngle);
@@ -112,28 +113,74 @@ void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, in
 	}
 }
 
+// set the servo angle and move the car until the compass is facing the desired heading
+// give Clock Wise and Counter Clock Wise servo angles, function will figure out best one to use
+	// note that because of slow servo response time, the car might drift a little after coming out of the turn
+	// however, if the PID starts to log immediately after, it should correct itself to the center of the track
+void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, int16_t gotoHeading){
+	
+	// set the heading variable
+	_getHeading();
+	
+	// normalize angles (_compassHeading at 0 and abs(gotoHeading) less than 180
+	int16_t curNormalize = -_compassHeading;
+	
+	
+	// turning CCW
+	if(gotoHeading < _compassHeading){
+
+	}
+	// turn CW
+	else{
+		
+	}
+	
+}
+
 // PID stuff
 // set the PID variables
 void AV4Wheel2::initPID(){
-	
+	_PIDDerivative = 0;
+	_PIDIntegral = 0;
 }
 
 // start PID logging and reset PID variables
 void AV4Wheel2::startPID(){
-	_pidStartTime = micros();
+	_pidPrevTime = micros();
 }
 
 // record PID data for current time
+// TODO: record forward distance loss using pythagorean theorem
+// Maybe use distance in ticks instead of time on the x axis
 void AV4Wheel2::_logPID(){
+	int tempTime = micros();
+	int timeGap = _pidPrevTime - tempTime;
+	int nextPoint = _getNextPositionPoint(timeGap);
 	
+	// rise over run
+	_PIDDerivative = (nextPoint-_prevPoint)/timeGap;
+	// trapazoidal integral
+	_PIDIntegral += _prevPoint*timeGap + 0.5f*(nextPoint-_prevPoint);
+	
+	
+	_prevPoint = nextPoint;
+	_pidPrevTime = tempTime;
 }
 
+// get the next y position for the PID controller given the time gap between the previous measurement
+int AV4Wheel2::_getNextPositionPoint(int timeGap){
+		// need prev position point, new position point is prev_position+(heading-desired_heading)*time_gap
+		return _prevPoint+(_compassHeading-_desiredDirn)*timeGap;
+}
+
+// set the desired PID heading, PID should keep car going in straing line
 void AV4Wheel2::setPIDHeading(int16_t dirn){
-	// Might have to take the integral of compass heading w.r.t. time to get actual PID integral
-	// position is the integral of compass heading because error grows at constant rate if heading is off
+	_desiredDirn = dirn;
 }
 
 // get servo adjustment from PID
+// Might have to take the integral of compass heading w.r.t. time to get actual PID integral
+// position is the integral of compass heading because error grows at constant rate if heading is off
 int AV4Wheel2::_getAdjustment(){
 	
 }
@@ -166,6 +213,11 @@ void AV4Wheel2::interrupEncoderFunc(){
     _interruptTickCounter++;
 }
 
+// reset ticks
+void AV4Wheel2::resetInterruptTicks(){
+	_interruptTickCounter = 0;
+}
+
 // get the Interupt ticks
 int AV4Wheel2::getInterrupTicks(){
     return _interruptTickCounter;
@@ -173,7 +225,7 @@ int AV4Wheel2::getInterrupTicks(){
 
 // Test the encoder interrupt function
 void AV4Wheel2::testInterrupt(){
-    _interruptTickCounter = 0;
+    resetInterruptTicks();
     while(_interruptTickCounter < 4*TICKS_PER_ROTATION){
         Serial.print(_interruptTickCounter);
         Serial.println(" Ticks Done");
