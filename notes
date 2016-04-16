@@ -4,3 +4,9 @@ gps reciever (use Software serial with rx = to tx, only incoming data):
 https://www.sparkfun.com/products/13740
 Software I2C:
 http://playground.arduino.cc/Main/SoftwareI2CLibrary
+
+Compass Links:
+https://community.freescale.com/thread/376418
+http://arstechnica.com/civis/viewtopic.php?f=26&t=1255509
+http://forum.arduino.cc/index.php?topic=265541.0
+http://blog.solutions-cubed.com/lsm303-compass-tilt-compensation/
