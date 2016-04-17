@@ -15,15 +15,16 @@
 class AV4Wheel2{
     public:
         AV4Wheel2();
-        void init(int md, int ms, int ep, int sp, float wc);
+        void init(int mda, int msa, int mdb, int msb, int sp, float wc);
         void rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle);
         void moveDist(int dist, int dirn, int speed, int servoAngle);
         void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
         void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, int16_t gotoHeading);
         
         //Public PID functions
-        void initPID();
+        void initPID(float p, float i, float d);
         void startPID();
+        void resetPID();
         
         // Compass functions
         void initCompass(int16_t* (*func)());
@@ -44,9 +45,10 @@ class AV4Wheel2{
         int ping_in();
         
     private:
-        int _motorDirn;     // Motor dirn pin
-        int _motorSpeed;    // Motor Speed pin
-        int _encoderPin;    // Encoder pin
+        int _motorDirn_A;     // Motor A dirn pin
+        int _motorSpeed_A;    // Motor A Speed pin
+		int _motorDirn_B;     // Motor B dirn pin, need to manually reverse wiring
+        int _motorSpeed_B;    // Motor B Speed pin
         int _servoPin;      // Servo Pin
         float _wheelCircumfrence;   // Wheel Circumfrence
         Servo _steeringServo;   // Front servo object
@@ -60,14 +62,17 @@ class AV4Wheel2{
         
         // PID variables and methods
         void _logPID();
-        int _getAdjustment();
-        int _pidPrevTime;
+        float _getAdjustment();
         void _adjustServo(int baseAngle);
+        int _getNextPositionPoint(int timeGap);
+        int _pidPrevTime;
         float _PIDIntegral;
         float _PIDDerivative;
         int _prevPoint;
         int16_t _desiredDirn;
-        int _getNextPositionPoint(int timeGap);
+        float _pConst;
+        float _iConst;
+        float _dConst;
         
         // Newping Functions
         uint8_t _triggerBit;

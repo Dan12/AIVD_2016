@@ -17,23 +17,23 @@ AV4Wheel2::AV4Wheel2(){}
 AV4 Wheel Init function
 md-motor dirn Pin
 ms-motor speed Pin
-ep-encoder pin
 sp-servo pin
 wc-wheel circumfrence
 */
-void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
-    _motorDirn = md;
-    _motorSpeed = ms;
-
-    _encoderPin = ep;
+void AV4Wheel2::init(int mda, int msa, int mdb, int msb, int sp, float wc){
+    _motorDirn_A = mda;
+    _motorSpeed_A = msa;
+    _motorDirn_B = mdb;
+    _motorSpeed_B = msb;
+    
     _servoPin = sp;
     
     _wheelCircumfrence = wc;
     
-    pinMode(_motorDirn,OUTPUT);
-    pinMode(_motorSpeed,OUTPUT);
-    
-    pinMode(_encoderPin,INPUT);
+    pinMode(_motorDirn_A,OUTPUT);
+    pinMode(_motorSpeed_A,OUTPUT);
+	pinMode(_motorDirn_B,OUTPUT);
+    pinMode(_motorSpeed_B,OUTPUT);
     
     _steeringServo.attach(_servoPin);
     
@@ -45,10 +45,12 @@ void AV4Wheel2::init(int md, int ms, int ep, int sp, float wc){
 // general move
 void AV4Wheel2::_genMove(int dirn, int speed){
 	// go in the specified direction
-	digitalWrite(_motorDirn, dirn);
+	digitalWrite(_motorDirn_A, dirn);
+	digitalWrite(_motorDirn_B, dirn);
 	
 	// go at the default speed if no speed specified (-1)
-	analogWrite(_motorSpeed, speed == -1 ? DEFAULT_SPEED : speed);
+	analogWrite(_motorSpeed_A, speed == -1 ? DEFAULT_SPEED : speed);
+	analogWrite(_motorSpeed_B, speed == -1 ? DEFAULT_SPEED : speed);
 }
 
 // ramp motion
@@ -139,9 +141,18 @@ void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAn
 
 // PID stuff
 // set the PID variables
-void AV4Wheel2::initPID(){
+void AV4Wheel2::initPID(float p, float i, float d){
 	_PIDDerivative = 0;
 	_PIDIntegral = 0;
+	
+	_pConst = p;
+	_iConst = i;
+	_dConst = d;
+}
+
+void AV4Wheel2::resetPID(){
+		_PIDDerivative = 0;
+		_PIDIntegral = 0;
 }
 
 // start PID logging and reset PID variables
@@ -160,7 +171,7 @@ void AV4Wheel2::_logPID(){
 	// rise over run
 	_PIDDerivative = (nextPoint-_prevPoint)/timeGap;
 	// trapazoidal integral
-	_PIDIntegral += _prevPoint*timeGap + 0.5f*(nextPoint-_prevPoint);
+	_PIDIntegral += timeGap*(_prevPoint + 0.5f*(nextPoint-_prevPoint));
 	
 	
 	_prevPoint = nextPoint;
@@ -181,29 +192,28 @@ void AV4Wheel2::setPIDHeading(int16_t dirn){
 // get servo adjustment from PID
 // Might have to take the integral of compass heading w.r.t. time to get actual PID integral
 // position is the integral of compass heading because error grows at constant rate if heading is off
-int AV4Wheel2::_getAdjustment(){
-	
+float AV4Wheel2::_getAdjustment(){
+	return _prevPoint*_pConst + _PIDIntegral*_iConst + _PIDDerivative*_dConst;
 }
 
 // adjust servo based on base angle for serve
 void AV4Wheel2::_adjustServo(int baseAngle){
-	
+	_steeringServo.write(baseAngle - _getAdjustment());
 }
 
 // compass code
 void AV4Wheel2::initCompass(int16_t* (*func)()){
 	// create array by getting result of the function call
 	// turn pointer of result to actual value and use it to initialze the array
-	int16_t temp[3] = {*(*func)()};
-	Serial.println(temp[0]);
-	Serial.println(temp[1]);
+	int16_t temp = *(*func)();
+	Serial.println(temp);
 	// store the heading function
 	_headingFunc = func;
 }
 
 // Get the heading from the heading function
 void AV4Wheel2::_getHeading(){
-	_compassHeading = {*(*_headingFunc)()};
+	_compassHeading = *(*_headingFunc)();
 }
 
 // Interrupt code

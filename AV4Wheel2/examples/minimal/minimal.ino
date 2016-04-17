@@ -6,8 +6,10 @@
 AV4Wheel2 test;
 
 void setup(){
-    // Parameters: Motor dirn pin, Motor speed pin, Encoder pin, Steering Servo pin, Wheel Circumfrenc (in inches)
-    test.init(8, 9, 2, 3, 10.0);
+    // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
+    // 			   Steering Servo pin, Wheel Circumfrenc (in inches)
+    // IMPORTANT: switch Motor B pin wiring manually
+    test.init(8, 9, 10, 11, 3, 10.0);
     
     Serial.begin(9600);
     
