@@ -119,13 +119,13 @@ void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, in
 // give Clock Wise and Counter Clock Wise servo angles, function will figure out best one to use
 	// note that because of slow servo response time, the car might drift a little after coming out of the turn
 	// however, if the PID starts to log immediately after, it should correct itself to the center of the track
-void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, int16_t gotoHeading){
+void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading){
 	
 	// set the heading variable
 	_getHeading();
 	
 	// normalize angles (_compassHeading at 0 and abs(gotoHeading) less than 180
-	int16_t curNormalize = -_compassHeading;
+	float curNormalize = -_compassHeading;
 	
 	
 	// turning CCW
@@ -185,7 +185,7 @@ int AV4Wheel2::_getNextPositionPoint(int timeGap){
 }
 
 // set the desired PID heading, PID should keep car going in straing line
-void AV4Wheel2::setPIDHeading(int16_t dirn){
+void AV4Wheel2::setPIDHeading(float dirn){
 	_desiredDirn = dirn;
 }
 
@@ -202,10 +202,10 @@ void AV4Wheel2::_adjustServo(int baseAngle){
 }
 
 // compass code
-void AV4Wheel2::initCompass(int16_t* (*func)()){
+void AV4Wheel2::initCompass(float* (*func)()){
 	// create array by getting result of the function call
 	// turn pointer of result to actual value and use it to initialze the array
-	int16_t temp = *(*func)();
+	float temp = *(*func)();
 	Serial.println(temp);
 	// store the heading function
 	_headingFunc = func;

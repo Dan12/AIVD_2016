@@ -19,7 +19,7 @@ class AV4Wheel2{
         void rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle);
         void moveDist(int dist, int dirn, int speed, int servoAngle);
         void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
-        void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, int16_t gotoHeading);
+        void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading);
         
         //Public PID functions
         void initPID(float p, float i, float d);
@@ -27,9 +27,9 @@ class AV4Wheel2{
         void resetPID();
         
         // Compass functions
-        void initCompass(int16_t* (*func)());
+        void initCompass(float* (*func)());
         // set PID desired heading
-        void setPIDHeading(int16_t dirn);
+        void setPIDHeading(float dirn);
         
         // Interupt functions
         // interupt function to be passed in main program
@@ -53,8 +53,8 @@ class AV4Wheel2{
         float _wheelCircumfrence;   // Wheel Circumfrence
         Servo _steeringServo;   // Front servo object
         volatile int _interruptTickCounter; // interup ticks counter
-        int16_t _compassHeading;	// Compass heading
-        int16_t* (*_headingFunc)();	// Pointer to compass heading function that returns int16_t pointer
+        float _compassHeading;	// Compass heading
+        float* (*_headingFunc)();	// Pointer to compass heading function that returns int16_t pointer
 		void _getHeading();	// Library function to call compass heading function and store the result
         
         // movement functions

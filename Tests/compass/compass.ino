@@ -1,6 +1,13 @@
 #include <Wire.h>
 #include <LSM303.h>
 
+//include Servo and 4WheelDrive Library
+#include <Servo.h>
+#include <AV4Wheel2.h>
+
+//Creating 4WheelDrive object
+AV4Wheel2 test;
+
 LSM303 compass;
 
 void setup() {
@@ -19,31 +26,22 @@ void setup() {
   compass.m_max = (LSM303::vector<int16_t>){-1, +230, +599};
   //compass.m_min = (LSM303::vector<int16_t>){-32767, -32767, -32767};
   //compass.m_max = (LSM303::vector<int16_t>){+32767, +32767, +32767};
+  
+  // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
+  // 			   Steering Servo pin, Wheel Circumfrenc (in inches)
+  // IMPORTANT: switch Motor B pin wiring manually
+  test.init(8, 9, 10, 11, 3, 10.0);
 }
 
 void loop() {
-  compass.read();
   
-  /*
-  When given no arguments, the heading() function returns the angular
-  difference in the horizontal plane between a default vector and
-  north, in degrees.
-  
-  The default vector is chosen by the library to point along the
-  surface of the PCB, in the direction of the top of the text on the
-  silkscreen. This is the +X axis on the Pololu LSM303D carrier and
-  the -Y axis on the Pololu LSM303DLHC, LSM303DLM, and LSM303DLH
-  carriers.
-  
-  To use a different vector as a reference, use the version of heading()
-  that takes a vector argument; for example, use
-  
-    compass.heading((LSM303::vector<int>){0, 0, 1});
-  
-  to use the +Z axis as a reference.
-  */
-  float heading = compass.heading();
-  
-  Serial.println(heading);
-  delay(100);
 }
+
+float* getCompassHeading(){
+    compass.read();
+    
+    float heading = compass.heading();
+    
+    return &heading;
+}
+
