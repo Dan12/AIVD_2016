@@ -84,11 +84,11 @@ void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
 	// calculate total ticks by dist/(dist/rotation)*ticks/rotation
 	int totalTicks = dist/_wheelCircumfrence*TICKS_PER_ROTATION;
 	
-	// TODO: adjust heading using PID
-	
 	// while we still have ticks to go, loop
 	while(_interruptTickCounter < totalTicks){
+		_logPID();
 		_genMove(dirn,speed);
+		_adjustServo(servoAngle);
 	}
 }
 
@@ -98,19 +98,21 @@ void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, in
 	_steeringServo.write(servoAngle);
 	_genMove(dirn, speed);
 	
-	// TODO: make servo adjustments for PID
-	
 	// trigger when object closer than ultraDist
 	if(ultraTrigger == 1){
 		while(ping_in() > ultraDist){
 			// minimum delay between pings
 			delay(30);
+			_logPID();
+			_adjustServo(servoAngle);
 		}
 	}
 	else{
 		while(ping_in() < ultraDist){
 			// minimum delay between pings
 			delay(30);
+			_logPID();
+			_adjustServo(servoAngle);
 		}
 	}
 }
@@ -124,19 +126,35 @@ void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAn
 	// set the heading variable
 	_getHeading();
 	
-	// normalize angles (_compassHeading at 0 and abs(gotoHeading) less than 180
-	float curNormalize = -_compassHeading;
-	
-	
-	// turning CCW
-	if(gotoHeading < _compassHeading){
-
-	}
-	// turn CW
-	else{
+	// distance between the two angles
+	float distance = abs(_compassHeading-gotoHeading);
+	if(distance > 180)
+		distance -= 180;
 		
+	int servoAngle = 90;
+	// turning CCW	
+	if((_compassHeading-gotoHeading > 0 && _compassHeading-gotoHeading < 180) || gotoHeading-_compassHeading > 180)
+		servoAngle = servoAngleCCW;
+	// turn CW
+	else
+		servoAngle = servoAngleCW;
+	
+	_steeringServo.write(servoAngle);
+	float prevAngle = _compassHeading;
+	while(distance > 0){
+		_genMove(dirn,speed);
+		_getHeading();
+		float diff = abs(_compassHeading-prevAngle);
+		distance -= diff > 180 ? 360-diff : diff;
+		
+		_logPID();
+		_adjustServo(servoAngle);
 	}
 	
+}
+
+void AV4Wheel2::stopCar(){
+	_genMove(LOW,0);
 }
 
 // PID stuff
@@ -148,16 +166,22 @@ void AV4Wheel2::initPID(float p, float i, float d){
 	_pConst = p;
 	_iConst = i;
 	_dConst = d;
+	
+	_pidRunning = false;
 }
 
 void AV4Wheel2::resetPID(){
-		_PIDDerivative = 0;
-		_PIDIntegral = 0;
+	_PIDDerivative = 0;
+	_PIDIntegral = 0;
+	
+	_pidRunning = false;
 }
 
 // start PID logging and reset PID variables
 void AV4Wheel2::startPID(){
 	_pidPrevTime = micros();
+	
+	_pidRunning = true;
 }
 
 // record PID data for current time
@@ -198,7 +222,7 @@ float AV4Wheel2::_getAdjustment(){
 
 // adjust servo based on base angle for serve
 void AV4Wheel2::_adjustServo(int baseAngle){
-	_steeringServo.write(baseAngle - _getAdjustment());
+	_steeringServo.write(baseAngle - _pidRunning ? _getAdjustment() : 0);
 }
 
 // compass code

@@ -20,6 +20,7 @@ class AV4Wheel2{
         void moveDist(int dist, int dirn, int speed, int servoAngle);
         void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
         void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading);
+        void stopCar();
         
         //Public PID functions
         void initPID(float p, float i, float d);
@@ -73,6 +74,7 @@ class AV4Wheel2{
         float _pConst;
         float _iConst;
         float _dConst;
+        boolean _pidRunning;
         
         // Newping Functions
         uint8_t _triggerBit;
