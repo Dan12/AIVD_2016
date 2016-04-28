@@ -1,9 +1,19 @@
 Arduino Uno
 2-Encoder
+3-Button
 4-Bluetooth RX
 5-Bluetooth TX
 6-Steering Servo Signal
-9-Button
-10-GPS RX
+7-Motor A Dirn
+8-Motor A Speed
+9-Motor B Dirn
+10-Motor B Speed
+11-GPS RX
+12-Ultrasonic A Trigger
+13-Ultrasonic A Echo
+A0-Ultrasonic B Trigger
+A1-Ultrasonic B Echo
+A2-Ultrasonic C Trigger
+A3-Ultrasonic C Echo
 SDA-Compass SDA
 SCL-Compass SDL

@@ -54,22 +54,22 @@ void AV4Wheel2::_genMove(int dirn, int speed){
 }
 
 // ramp motion
-void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle){
+void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int delayTime, int steps, int dirn, int servoAngle){
 	_steeringServo.write(servoAngle);
 	
 	// TODO: log PID in loops
 	
 	// ramp up
 	if(startSpeed < finalSpeed)
-		for(int i = 0; i <= finalSpeed; i++){
+		for(int i = 0; i <= finalSpeed; i+=steps){
 			_genMove(dirn, i);
-			delay(RAMP_DELAY);
+			delay(delayTime == -1 ? RAMP_DELAY : delayTime);
 		}
 	// ramp down
 	else
-		for(int i = startSpeed; i >= finalSpeed; i--){
+		for(int i = startSpeed; i >= finalSpeed; i-=steps){
 			_genMove(dirn, i);
-			delay(RAMP_DELAY);
+			delay(delayTime == -1 ? RAMP_DELAY : delayTime);
 		}
 }
 
@@ -173,7 +173,9 @@ void AV4Wheel2::initPID(float p, float i, float d){
 void AV4Wheel2::resetPID(){
 	_PIDDerivative = 0;
 	_PIDIntegral = 0;
-	
+}
+
+void AV4Wheel2::stopPID(){			
 	_pidRunning = false;
 }
 

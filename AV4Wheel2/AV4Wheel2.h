@@ -15,35 +15,32 @@
 class AV4Wheel2{
     public:
         AV4Wheel2();
-        void init(int mda, int msa, int mdb, int msb, int sp, float wc);
-        void rampMotion(int startSpeed, int finalSpeed, int dirn, int servoAngle);
-        void moveDist(int dist, int dirn, int speed, int servoAngle);
-        void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);
-        void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading);
-        void stopCar();
+        void init(int mda, int msa, int mdb, int msb, int sp, float wc); // init core variables and pins
+        void rampMotion(int startSpeed, int finalSpeed, int delayTime, int steps, int dirn, int servoAngle);	// ramp from start to final speed (use default delay if delay is -1)
+        void moveDist(int dist, int dirn, int speed, int servoAngle);	// move a certain distance at a speed and servo angle
+        void moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger);	// move until ultrasonic threshold reached
+        void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading);	// move until turned to given compass angle
+        void stopCar();	// stop all car motion (only use after ramped down to ensure a full stop)
         
         //Public PID functions
-        void initPID(float p, float i, float d);
-        void startPID();
-        void resetPID();
+        void initPID(float p, float i, float d); // init PID constants
+        void startPID();	// start pid recording
+        void stopPID();	// stop pid adjustments
+        void resetPID();	// reset pid variables
         
         // Compass functions
-        void initCompass(float* (*func)());
-        // set PID desired heading
-        void setPIDHeading(float dirn);
+		void initCompass(float* (*func)());	// give pointer to compass heading function
+        void setPIDHeading(float dirn);	// set PID desired heading
         
         // Interupt functions
-        // interupt function to be passed in main program
-        void interrupEncoderFunc();
-        // method to get interupt ticks
-        int getInterrupTicks();
-        void testInterrupt();
-        void resetInterruptTicks();
+        void interrupEncoderFunc();	// interupt function to be called in main program
+        int getInterrupTicks();	// method to get interupt ticks
+        void testInterrupt();	// run interrupt tests
+        void resetInterruptTicks();	// reset tick counter
         
-        // Setup Newping Sensor
-        void initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance);
-        // Get Newping ping in inches
-        int ping_in();
+        // Ultrasonic function
+        void initUltra(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance);	// Setup Newping Sensor
+        int ping_in();	// Get Newping ping distance in inches
         
     private:
         int _motorDirn_A;     // Motor A dirn pin
@@ -59,22 +56,22 @@ class AV4Wheel2{
 		void _getHeading();	// Library function to call compass heading function and store the result
         
         // movement functions
-        void _genMove(int dirn, int speed);
+        void _genMove(int dirn, int speed);	// limited generic move
         
         // PID variables and methods
-        void _logPID();
-        float _getAdjustment();
-        void _adjustServo(int baseAngle);
-        int _getNextPositionPoint(int timeGap);
-        int _pidPrevTime;
-        float _PIDIntegral;
-        float _PIDDerivative;
-        int _prevPoint;
-        int16_t _desiredDirn;
-        float _pConst;
-        float _iConst;
-        float _dConst;
-        boolean _pidRunning;
+        void _logPID();	// log PID variables at the instance called
+        float _getAdjustment();	// get servo adjustment based on PID
+        void _adjustServo(int baseAngle);	// set servo angle based on PID adjustments
+        int _getNextPositionPoint(int timeGap);	// get next position because heading is derivative of position
+        int _pidPrevTime;	// store previous time to get time gap
+        float _PIDIntegral;	// track integral
+        float _PIDDerivative;	// track derivative
+        int _prevPoint;	// store the previous position point
+        int16_t _desiredDirn;	// the desired direction
+        float _pConst;	// P Constant
+        float _iConst;	// I Constant
+        float _dConst;	// D constant
+        boolean _pidRunning;	// Only make servo adjustments if this is true
         
         // Newping Functions
         uint8_t _triggerBit;

@@ -19,11 +19,11 @@ void setup(){
 
 void loop(){
 	// ramp up
-	// start speed, final speed, motor direction, servo angle
-	test.rampMotion(0, 125, HIGH, 90);
+	// start speed, final speed, delay, steps, motor direction, servo angle
+	test.rampMotion(0, 125, 30, 1, HIGH, 90);
 	
 	// ramp down
-	test.rampMotion(125, 0, HIGH, 90);
+	test.rampMotion(125, 0, 30, 1, HIGH, 90);
 
 }
 
