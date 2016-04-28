@@ -27,6 +27,7 @@ class AV4Wheel2{
         void startPID();	// start pid recording
         void stopPID();	// stop pid adjustments
         void resetPID();	// reset pid variables
+        void viewPID();	// view PID variables
         
         // Compass functions
 		void initCompass(float* (*func)());	// give pointer to compass heading function

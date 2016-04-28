@@ -57,7 +57,7 @@ void AV4Wheel2::_genMove(int dirn, int speed){
 void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int delayTime, int steps, int dirn, int servoAngle){
 	_steeringServo.write(servoAngle);
 	
-	// TODO: log PID in loops
+	// TODO: log PID when implemented with ticks
 	
 	// ramp up
 	if(startSpeed < finalSpeed)
@@ -186,9 +186,18 @@ void AV4Wheel2::startPID(){
 	_pidRunning = true;
 }
 
+void AV4Wheel2::viewPID(){
+	Serial.print("PID: ");
+	Serial.print("Integral: ");
+	Serial.print(_PIDIntegral);
+	Serial.print("   Adjustment: ");
+	Serial.print(_getAdjustment());	
+}
+
 // record PID data for current time
 // TODO: record forward distance loss using pythagorean theorem
-// Maybe use distance in ticks instead of time on the x axis
+// TODO: maybe use distance in ticks instead of time on the x axis (time only good if speed is constant)
+// TODO: maybe apply a low pass filter to the heading variable to get rid of random fluxtuations
 void AV4Wheel2::_logPID(){
 	int tempTime = micros();
 	int timeGap = _pidPrevTime - tempTime;
