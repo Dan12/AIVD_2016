@@ -5,8 +5,8 @@ Arduino Uno
 5-Bluetooth TX
 6-Steering Servo Signal
 7-Motor A Dirn
-8-Motor A Speed
-9-Motor B Dirn
+8-Motor B Dirn
+9-Motor A Speed
 10-Motor B Speed
 11-GPS RX
 12-Ultrasonic A Trigger
