@@ -1,13 +1,13 @@
 Arduino Uno
 2-Encoder
-3-Button
-4-Bluetooth RX
-5-Bluetooth TX
+3-Motor A Speed
+4-Motor A Dirn
+5-Motor B Speed
 6-Steering Servo Signal
-7-Motor A Dirn
-8-Motor B Dirn
-9-Motor A Speed
-10-Motor B Speed
+7-Motor B Dirn
+8-Button
+9-Bluetooth TX
+10-Bluetooth RX
 11-GPS RX
 12-Ultrasonic A Trigger
 13-Ultrasonic A Echo

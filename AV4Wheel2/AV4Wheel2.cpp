@@ -35,11 +35,7 @@ void AV4Wheel2::init(int mda, int msa, int mdb, int msb, int sp, float wc){
 	pinMode(_motorDirn_B,OUTPUT);
     pinMode(_motorSpeed_B,OUTPUT);
     
-    Serial.println(_servoPin);
-    
-	Serial.println("Init");
-    
-    //_steeringServo.attach(_servoPin);
+    _steeringServo.attach(_servoPin);
     
     resetInterruptTicks();
 }
@@ -51,13 +47,7 @@ void AV4Wheel2::_genMove(int dirn, int speed){
 	// go in the specified direction
 	digitalWrite(_motorDirn_A, dirn);
 	digitalWrite(_motorDirn_B, dirn);
-	Serial.println(_motorDirn_A);
-	Serial.println(_motorSpeed_A);
-	Serial.println(_motorDirn_B);
-	Serial.println(_motorSpeed_B);
-	Serial.println(dirn == HIGH);
-	Serial.println(speed == -1 ? DEFAULT_SPEED : speed);
-	Serial.println("-------");
+
 	// go at the default speed if no speed specified (-1)
 	analogWrite(_motorSpeed_A, speed == -1 ? DEFAULT_SPEED : speed);
 	analogWrite(_motorSpeed_B, speed == -1 ? DEFAULT_SPEED : speed);
@@ -89,13 +79,18 @@ void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
 	resetInterruptTicks();
 	
 	// set servo angle
-	_steeringServo.write(servoAngle);
-	
+	//_steeringServo.write(servoAngle);
+	Serial.println(servoAngle);
+	Serial.println(_interruptTickCounter);
+	Serial.println(dirn);
+	Serial.println(speed);
 	// calculate total ticks by dist/(dist/rotation)*ticks/rotation
 	int totalTicks = dist/_wheelCircumfrence*TICKS_PER_ROTATION;
+	Serial.println(totalTicks);
 	
 	// while we still have ticks to go, loop
 	while(_interruptTickCounter < totalTicks){
+		Serial.println(_interruptTickCounter);
 		_logPID();
 		_genMove(dirn,speed);
 		_adjustServo(servoAngle);
@@ -243,7 +238,7 @@ float AV4Wheel2::_getAdjustment(){
 
 // adjust servo based on base angle for serve
 void AV4Wheel2::_adjustServo(int baseAngle){
-	_steeringServo.write(baseAngle - _pidRunning ? _getAdjustment() : 0);
+	_steeringServo.write(baseAngle - (_pidRunning ? _getAdjustment() : 0));
 }
 
 // compass code
