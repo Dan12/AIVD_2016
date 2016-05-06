@@ -35,7 +35,11 @@ void AV4Wheel2::init(int mda, int msa, int mdb, int msb, int sp, float wc){
 	pinMode(_motorDirn_B,OUTPUT);
     pinMode(_motorSpeed_B,OUTPUT);
     
-    _steeringServo.attach(_servoPin);
+    Serial.println(_servoPin);
+    
+	Serial.println("Init");
+    
+    //_steeringServo.attach(_servoPin);
     
     resetInterruptTicks();
 }
@@ -47,7 +51,13 @@ void AV4Wheel2::_genMove(int dirn, int speed){
 	// go in the specified direction
 	digitalWrite(_motorDirn_A, dirn);
 	digitalWrite(_motorDirn_B, dirn);
-	
+	Serial.println(_motorDirn_A);
+	Serial.println(_motorSpeed_A);
+	Serial.println(_motorDirn_B);
+	Serial.println(_motorSpeed_B);
+	Serial.println(dirn == HIGH);
+	Serial.println(speed == -1 ? DEFAULT_SPEED : speed);
+	Serial.println("-------");
 	// go at the default speed if no speed specified (-1)
 	analogWrite(_motorSpeed_A, speed == -1 ? DEFAULT_SPEED : speed);
 	analogWrite(_motorSpeed_B, speed == -1 ? DEFAULT_SPEED : speed);
