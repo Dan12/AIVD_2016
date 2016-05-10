@@ -22,6 +22,10 @@ class AV4Wheel2{
         void changeHeading(int speed, int dirn, int servoAngleCW, int servoAngleCCW, float gotoHeading);	// move until turned to given compass angle
         void stopCar();	// stop all car motion (only use after ramped down to ensure a full stop)
         
+        // movement functions
+        void genMove(int dirn, int speed);	// limited generic move
+        void setServo(int angle);
+        
         //Public PID functions
         void initPID(float p, float i, float d); // init PID constants
         void startPID();	// start pid recording
@@ -55,9 +59,6 @@ class AV4Wheel2{
         float _compassHeading;	// Compass heading
         float* (*_headingFunc)();	// Pointer to compass heading function that returns int16_t pointer
 		void _getHeading();	// Library function to call compass heading function and store the result
-        
-        // movement functions
-        void _genMove(int dirn, int speed);	// limited generic move
         
         // PID variables and methods
         void _logPID();	// log PID variables at the instance called

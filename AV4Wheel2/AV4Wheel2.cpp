@@ -6,7 +6,7 @@
 #include "Arduino.h"
 #include "AV4Wheel2.h"
 
-#define TICKS_PER_ROTATION 90   // Encoder value for the number of measured ticks per rotation
+#define TICKS_PER_ROTATION 180   // Encoder value for the number of measured ticks per rotation
 #define DEFAULT_SPEED 125	// default car speed
 #define RAMP_DELAY 30	// milliseconds of ramp speed delay
 
@@ -43,7 +43,7 @@ void AV4Wheel2::init(int mda, int msa, int mdb, int msb, int sp, float wc){
 // Movement code
 
 // general move
-void AV4Wheel2::_genMove(int dirn, int speed){
+void AV4Wheel2::genMove(int dirn, int speed){
 	// go in the specified direction
 	digitalWrite(_motorDirn_A, dirn);
 	digitalWrite(_motorDirn_B, dirn);
@@ -51,6 +51,10 @@ void AV4Wheel2::_genMove(int dirn, int speed){
 	// go at the default speed if no speed specified (-1)
 	analogWrite(_motorSpeed_A, speed == -1 ? DEFAULT_SPEED : speed);
 	analogWrite(_motorSpeed_B, speed == -1 ? DEFAULT_SPEED : speed);
+}
+
+void AV4Wheel2::setServo(int angle){
+	_steeringServo.write(angle);
 }
 
 // ramp motion
@@ -62,13 +66,13 @@ void AV4Wheel2::rampMotion(int startSpeed, int finalSpeed, int delayTime, int st
 	// ramp up
 	if(startSpeed < finalSpeed)
 		for(int i = 0; i <= finalSpeed; i+=steps){
-			_genMove(dirn, i);
+			genMove(dirn, i);
 			delay(delayTime == -1 ? RAMP_DELAY : delayTime);
 		}
 	// ramp down
 	else
 		for(int i = startSpeed; i >= finalSpeed; i-=steps){
-			_genMove(dirn, i);
+			genMove(dirn, i);
 			delay(delayTime == -1 ? RAMP_DELAY : delayTime);
 		}
 }
@@ -92,7 +96,7 @@ void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
 	while(_interruptTickCounter < totalTicks){
 		Serial.println(_interruptTickCounter);
 		_logPID();
-		_genMove(dirn,speed);
+		genMove(dirn,speed);
 		_adjustServo(servoAngle);
 	}
 }
@@ -101,7 +105,7 @@ void AV4Wheel2::moveDist(int dist, int dirn, int speed, int servoAngle){
 // move at the speed and in the dirn, if ultraTrigger == 1, move until ultraSonic is < ultraDist, visa versa
 void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, int ultraTrigger){
 	_steeringServo.write(servoAngle);
-	_genMove(dirn, speed);
+	genMove(dirn, speed);
 	
 	// trigger when object closer than ultraDist
 	if(ultraTrigger == 1){
@@ -147,7 +151,7 @@ void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAn
 	_steeringServo.write(servoAngle);
 	float prevAngle = _compassHeading;
 	while(distance > 0){
-		_genMove(dirn,speed);
+		genMove(dirn,speed);
 		_getHeading();
 		float diff = abs(_compassHeading-prevAngle);
 		distance -= diff > 180 ? 360-diff : diff;
@@ -159,7 +163,7 @@ void AV4Wheel2::changeHeading(int speed, int dirn, int servoAngleCW, int servoAn
 }
 
 void AV4Wheel2::stopCar(){
-	_genMove(LOW,0);
+	genMove(LOW,0);
 }
 
 // PID stuff
