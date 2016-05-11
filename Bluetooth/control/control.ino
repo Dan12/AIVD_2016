@@ -62,12 +62,13 @@ void loop()
   //Read from bluetooth and write to usb serial
   if(bluetooth.available())
   {
+    //Serial.println(bluetooth.read());
     int data1 = bluetooth.parseInt();
-    Serial.println(data1);
+    //Serial.println(data1);
     int data2 = bluetooth.parseInt();
-    Serial.println(data2);
+    //Serial.println(data2);
     int data3 = bluetooth.parseInt();
-    Serial.println(data3);
+    //Serial.println(data3);
     angle = data1;
     knobX = data2*-1;
     knobY = data3*-1;
@@ -84,8 +85,8 @@ void loop()
     if(distance == 0)
       distance = maxDistance;
     distance*=distScale;
-    sendInt(distance);
-    Serial.println(distance);
+    sendInt(distance*2);
+    //Serial.println(distance);
     returnMes = false;
   }
 }
@@ -106,7 +107,7 @@ void setMotion(){
   prevSpeed = moveSpeed;
   boolean reverse = moveSpeed < 0;
   moveSpeed = abs(moveSpeed);
-  
+  Serial.println(reverse ? 0 : 1);
   car.setServo(moveAngle);
   car.genMove(reverse ? 0 : 1,moveSpeed);
   

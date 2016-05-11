@@ -7,7 +7,7 @@ AV4Wheel2 test;
 
 int buttonPin = 8;
 
-int servoCent = 100;
+int servoCent = 95;
 
 void setup(){
     // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
@@ -22,7 +22,7 @@ void setup(){
     // Attach interrupt on pin 2
     attachInterrupt(0, interruptFunc, RISING);
     
-            test.testInterrupt();
+           // test.testInterrupt();
 }
 
 void loop(){
@@ -31,7 +31,7 @@ void loop(){
 	// start speed, final speed, delay, steps, motor direction, servo angle
 	test.rampMotion(0, 125, 20, 1, HIGH, servoCent);
 	
-      test.moveDist(5*12.0, 1, 125, servoCent-10);
+    test.moveUltra(125, 1, servoCent, 30, 1);
 
 	// ramp down
 	test.rampMotion(125, 0, 20, 1, HIGH, servoCent);

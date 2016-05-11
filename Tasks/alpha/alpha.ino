@@ -31,10 +31,10 @@ void loop(){
 	// start speed, final speed, delay, steps, motor direction, servo angle
 	test.rampMotion(0, 125, 20, 1, HIGH, servoCent);
 	
-      test.moveDist(5*12.0, 1, 125, servoCent-10);
+    test.moveDist(10*12.0, 1, 125, servoCent-10);
 
 	// ramp down
-	test.rampMotion(125, 0, 20, 1, HIGH, servoCent);
+	//test.rampMotion(125, 0, 20, 1, HIGH, servoCent);
   }
 }
 

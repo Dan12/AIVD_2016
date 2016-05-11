@@ -107,21 +107,25 @@ void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, in
 	_steeringServo.write(servoAngle);
 	genMove(dirn, speed);
 	
+	int curDist = ping_in()
+	
 	// trigger when object closer than ultraDist
 	if(ultraTrigger == 1){
-		while(ping_in() > ultraDist){
+		while(curDist == -1 || curDist > ultraDist){
 			// minimum delay between pings
 			delay(30);
 			_logPID();
 			_adjustServo(servoAngle);
+			curDist = ping_in();
 		}
 	}
 	else{
-		while(ping_in() < ultraDist){
+		while(curDist == -1 || curDist < ultraDist){
 			// minimum delay between pings
 			delay(30);
 			_logPID();
 			_adjustServo(servoAngle);
+			curDist = ping_in();
 		}
 	}
 }
@@ -294,7 +298,7 @@ void AV4Wheel2::testInterrupt(){
 #define DISABLE_ONE_PIN false   // Set to "true" to save up to 26 bytes of compiled code space if you're not using one pin sensor connections.
 
 // Probably shoudln't change these values unless you really know what you're doing.
-#define NO_ECHO 0               // Value returned if there's no ping echo within the specified MAX_SENSOR_DISTANCE or max_cm_distance.
+#define NO_ECHO -1               // Value returned if there's no ping echo within the specified MAX_SENSOR_DISTANCE or max_cm_distance.
 #define MAX_SENSOR_DELAY 18000  // Maximum uS it takes for sensor to start the ping (SRF06 is the highest measured, just under 18ms).
 // #define ECHO_TIMER_FREQ 24      // Frequency to check for a ping echo (every 24uS is about 0.4cm accuracy).
 // #define PING_MEDIAN_DELAY 29    // Millisecond delay between pings in the ping_median method.
