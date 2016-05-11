@@ -7,7 +7,7 @@ AV4Wheel2 test;
 
 int buttonPin = 8;
 
-int servoCent = 95;
+int servoCent = 96;
 
 void setup(){
     // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
@@ -16,6 +16,8 @@ void setup(){
     test.init(4, 3, 7, 5, 6, 10.0);
     
     pinMode(buttonPin, INPUT_PULLUP);
+
+    test.initUltra(12,13,500);
     
     Serial.begin(9600);
     
@@ -29,12 +31,12 @@ void loop(){
   if(digitalRead(buttonPin) == LOW){
 	// ramp up
 	// start speed, final speed, delay, steps, motor direction, servo angle
-	test.rampMotion(0, 125, 20, 1, HIGH, servoCent);
+	test.rampMotion(0, 100, 20, 1, HIGH, servoCent);
 	
-    test.moveUltra(125, 1, servoCent, 30, 1);
+    test.moveUltra(100, 1, servoCent, 54, 1);
 
 	// ramp down
-	test.rampMotion(125, 0, 20, 1, HIGH, servoCent);
+	test.rampMotion(100, 0, 20, 1, HIGH, servoCent);
   }
 }
 
