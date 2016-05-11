@@ -107,7 +107,7 @@ void AV4Wheel2::moveUltra(int speed, int dirn, int servoAngle, int ultraDist, in
 	_steeringServo.write(servoAngle);
 	genMove(dirn, speed);
 	
-	int curDist = ping_in()
+	int curDist = ping_in();
 	
 	// trigger when object closer than ultraDist
 	if(ultraTrigger == 1){

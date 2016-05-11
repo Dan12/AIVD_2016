@@ -22,19 +22,24 @@ void setup() {
   program to determine appropriate values for your particular unit.
   */
   
-  compass.m_min = (LSM303::vector<int16_t>){-741, -679, -540};
-  compass.m_max = (LSM303::vector<int16_t>){-1, +230, +599};
+  compass.m_min = (LSM303::vector<int16_t>){-579, -651, -706};
+  compass.m_max = (LSM303::vector<int16_t>){712, 629, 594};
   //compass.m_min = (LSM303::vector<int16_t>){-32767, -32767, -32767};
   //compass.m_max = (LSM303::vector<int16_t>){+32767, +32767, +32767};
   
   // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
   // 			   Steering Servo pin, Wheel Circumfrenc (in inches)
   // IMPORTANT: switch Motor B pin wiring manually
-  test.init(8, 9, 10, 11, 3, 10.0);
+  test.init(4, 3, 7, 5, 6, 7.5*3.14);
 }
 
 void loop() {
-  
+  compass.read();
+    
+    float heading = compass.heading();
+    
+    Serial.print("Heading: ");
+    Serial.println(heading);
 }
 
 float* getCompassHeading(){

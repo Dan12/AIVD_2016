@@ -11,6 +11,7 @@ void setup() {
   Wire.begin();
   compass.init();
   compass.enableDefault();
+  Serial.println("start");
 }
 
 void loop() {  
