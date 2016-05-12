@@ -9,9 +9,9 @@ int buttonPin = 8;
 
 int servoCent = 96;
 
-int subAngle = 15;
+int subAngle = 18;
 int addAngle = 15;
-int maxSpeed = 100;
+int maxSpeed = 75;
 
 void setup(){
     // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
@@ -41,32 +41,35 @@ void loop(){
 		car.rampMotion(0, maxSpeed, 20, 1, HIGH, servoCent);
 
     //fwd till begin of first car
-		car.moveUltra(maxSpeed, 1, servoCent, 24, 1);
+		car.moveUltra(maxSpeed, HIGH, servoCent, 24, 1);
+    Serial.println("Hey1");
 		//fwd util end of first car
-		car.moveUltra(maxSpeed, 1, servoCent, 30, 0);
+		car.moveUltra(maxSpeed, HIGH, servoCent, 30, 0);
+    Serial.println("Hey2");
 		//fwd util begining of second car and slow down
-		car.moveUltra(maxSpeed, 1, servoCent, 24, 1);
+		car.moveUltra(maxSpeed, HIGH, servoCent, 24, 1);
+    Serial.println("Hey3");
 		car.rampMotion(maxSpeed, 0, 20, 1, HIGH, servoCent);
 		
 		// set servo to back
 		car.initUltra(A0, A1 ,500);
 		
 		//bkwd to halfway between cars
-		car.rampMotion(0, maxSpeed, 20, 1, LOW, servoCent);
+		car.rampMotion(0, maxSpeed, 20, 1, LOW, servoCent-subAngle);
 		car.setServo(servoCent-subAngle);
 		car.moveDist(3.0*12.0, LOW, maxSpeed, servoCent-subAngle);
 		
 		//bkwd to end of car
     car.setServo(servoCent+addAngle);
-		car.moveUltra(maxSpeed, 1, servoCent+addAngle, 30, 1);
-		car.rampMotion(maxSpeed, 0, 20, 1, LOW, servoCent);
+		car.moveUltra(maxSpeed, LOW, servoCent+addAngle, 30, 1);
+		car.rampMotion(maxSpeed, 0, 20, 1, LOW, servoCent+addAngle);
 		
 		// fwd to bumper of front car
 		car.initUltra(12,13,500);
 		car.setServo(servoCent-subAngle);
 		car.rampMotion(0, maxSpeed, 20, 1, HIGH, servoCent-subAngle);
-		car.moveUltra(maxSpeed, 1, servoCent-subAngle, 30, 1);
-		car.rampMotion(maxSpeed, 0, 20, 1, HIGH, servoCent-subAngle);
+		car.moveUltra(maxSpeed, HIGH, servoCent-subAngle, 30, 1);
+		car.rampMotion(maxSpeed, 0, 20, 1, HIGH, servoCent);
 		car.setServo(servoCent);
 	}
 }

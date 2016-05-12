@@ -63,7 +63,8 @@ void loop()
   if(bluetooth.available())
   {
     //Serial.println(bluetooth.read());
-    int data1 = bluetooth.parseInt();
+    //int data1 = bluetooth.parseInt();
+    int data1=90;
     //Serial.println(data1);
     int data2 = bluetooth.parseInt();
     //Serial.println(data2);
