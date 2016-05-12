@@ -27,11 +27,12 @@ class AV4Wheel2{
         void setServo(int angle);
         
         //Public PID functions
-        void initPID(float p, float i, float d); // init PID constants
-        void startPID();	// start pid recording
+        void initPID(float p, float i, float d, float s, float min, float max); // init PID constants and scale
+        void startPID(boolean t);	// start pid recording
         void stopPID();	// stop pid adjustments
         void resetPID();	// reset pid variables
         void viewPID();	// view PID variables
+        float getPIDIntegral();
         
         // Compass functions
 		void initCompass(float* (*func)());	// give pointer to compass heading function
@@ -40,6 +41,7 @@ class AV4Wheel2{
         // Interupt functions
         void interrupEncoderFunc();	// interupt function to be called in main program
         int getInterrupTicks();	// method to get interupt ticks
+        float getInterruptDist();	// convert ticks to distance
         void testInterrupt();	// run interrupt tests
         void resetInterruptTicks();	// reset tick counter
         
@@ -64,16 +66,20 @@ class AV4Wheel2{
         void _logPID();	// log PID variables at the instance called
         float _getAdjustment();	// get servo adjustment based on PID
         void _adjustServo(int baseAngle);	// set servo angle based on PID adjustments
-        int _getNextPositionPoint(int timeGap);	// get next position because heading is derivative of position
+        float _getNextPositionPoint(float timeGap);	// get next position because heading is derivative of position
         int _pidPrevTime;	// store previous time to get time gap
         float _PIDIntegral;	// track integral
         float _PIDDerivative;	// track derivative
-        int _prevPoint;	// store the previous position point
+        float _prevPoint;	// store the previous position point
         int16_t _desiredDirn;	// the desired direction
         float _pConst;	// P Constant
         float _iConst;	// I Constant
         float _dConst;	// D constant
+        float _pidTimeScale;
+        float _uMin;
+        float _uMax;
         boolean _pidRunning;	// Only make servo adjustments if this is true
+        boolean _usingTicks;
         
         // Newping Functions
         uint8_t _triggerBit;

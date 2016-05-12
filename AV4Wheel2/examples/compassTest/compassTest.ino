@@ -10,6 +10,11 @@ AV4Wheel2 test;
 
 LSM303 compass;
 
+float heading = -1;
+int averageNum = 5;
+// 1.0 = no low pass filter
+float alpha = 1.0;
+
 void setup() {
   Serial.begin(9600);
   
@@ -37,11 +42,20 @@ void loop() {
 }
 
 float* getCompassHeading(){
-    compass.read();
+	float tempHeading = 0;
+	for(int i = 0; i < averageNum; i++){
+		compass.read();
+		tempHeading += compass.heading();
+    }
+    tempHeading = tempHeading/averageNum;
     
-    float heading = compass.heading();
+    if(heading == -1)
+		heading = tempHeading;
+	else
+		heading = heading*alpha + tempHeading*(1-alpha);
+    
     Serial.print("Heading: ");
-  Serial.println(heading);
+	Serial.println(heading);
     return &heading;
 }
 

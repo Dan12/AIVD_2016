@@ -48,6 +48,8 @@ void setup(){
   car.setServo(center);
   //Parameters: Trigger Pin, Echo Pin, Max Distance (cm)
   car.initUltra(12, 13, maxDistance);
+  
+  attachInterrupt(0, interruptFunc, RISING);
 }
 
 void loop()
@@ -73,8 +75,8 @@ void loop()
     int distance = car.ping_in();
     if(distance == 0)
       distance = maxDistance;
-    String str = String(distance);
-    str = "Distance: "+str+"\nHeading: 0.00\nLat: 42.12412\nLong: -87.2431\nIntegral: 24112\nEncoder Ticks: 5324";
+    String distStr = String(distance);
+    str = "Distance: "+distStr+"\nHeading: 0.00\nLat: 42.12412\nLong: -87.2431\nIntegral: "+car.getPIDIntegral()+"\nEncoder Ticks: "+car.getInterrupTicks()+"\nEncoder Dist: "+car.getInterrupDist();
     sendStr(str);
     //Serial.println(distance);
     returnMes = false;
@@ -114,4 +116,15 @@ void sendStr(String str){
   char e[2];
   endStr.toCharArray(e,2);
   bluetooth.print(e);
+}
+
+// need this because interrupt function has to be of void(*)()
+void interruptFunc() {
+	car.interrupEncoderFunc();
+}
+
+String floatToString(float val){
+	char outstr[25];
+	sprintf(outstr, "%f", val);
+	return String(outstr);
 }

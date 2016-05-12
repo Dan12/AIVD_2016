@@ -6,7 +6,7 @@
 #include "Arduino.h"
 #include "AV4Wheel2.h"
 
-#define TICKS_PER_ROTATION 180   // Encoder value for the number of measured ticks per rotation
+#define TICKS_PER_ROTATION 90   // Encoder value for the number of measured ticks per rotation
 #define DEFAULT_SPEED 125	// default car speed
 #define RAMP_DELAY 30	// milliseconds of ramp speed delay
 
@@ -172,15 +172,19 @@ void AV4Wheel2::stopCar(){
 
 // PID stuff
 // set the PID variables
-void AV4Wheel2::initPID(float p, float i, float d){
+void AV4Wheel2::initPID(float p, float i, float d, float s, float min, float max){
 	_PIDDerivative = 0;
 	_PIDIntegral = 0;
 	
 	_pConst = p;
 	_iConst = i;
 	_dConst = d;
+	_pidTimeScale = s;
 	
 	_pidRunning = false;
+	
+	_uMin = min;
+	_uMax = max;
 }
 
 void AV4Wheel2::resetPID(){
@@ -193,28 +197,38 @@ void AV4Wheel2::stopPID(){
 }
 
 // start PID logging and reset PID variables
-void AV4Wheel2::startPID(){
-	_pidPrevTime = micros();
+void AV4Wheel2::startPID(boolean t){
+	_usingTicks = t;
+	if(_usingTicks)
+		_pidPrevTime = _interruptTickCounter;
+	else
+		_pidPrevTime = millis();
 	
 	_pidRunning = true;
 }
 
 void AV4Wheel2::viewPID(){
-	Serial.print("PID: ");
 	Serial.print("Integral: ");
 	Serial.print(_PIDIntegral);
 	Serial.print("   Adjustment: ");
 	Serial.print(_getAdjustment());	
 }
 
+float AV4Wheel2::getPIDIntegral(){
+	return _PIDIntegral;
+}
+
 // record PID data for current time
 // TODO: record forward distance loss using pythagorean theorem
-// TODO: maybe use distance in ticks instead of time on the x axis (time only good if speed is constant)
-// TODO: maybe apply a low pass filter to the heading variable to get rid of random fluxtuations
 void AV4Wheel2::_logPID(){
-	int tempTime = micros();
-	int timeGap = _pidPrevTime - tempTime;
-	int nextPoint = _getNextPositionPoint(timeGap);
+	int tempTime = 0;
+	if(_usingTicks)
+		tempTime = _interruptTickCounter;
+	else
+		tempTime = millis();
+	
+	float timeGap = (_pidPrevTime - tempTime)*_pidTimeScale;
+	float nextPoint = _getNextPositionPoint(timeGap);
 	
 	// rise over run
 	_PIDDerivative = (nextPoint-_prevPoint)/timeGap;
@@ -227,7 +241,7 @@ void AV4Wheel2::_logPID(){
 }
 
 // get the next y position for the PID controller given the time gap between the previous measurement
-int AV4Wheel2::_getNextPositionPoint(int timeGap){
+float AV4Wheel2::_getNextPositionPoint(float timeGap){
 		// need prev position point, new position point is prev_position+(heading-desired_heading)*time_gap
 		return _prevPoint+(_compassHeading-_desiredDirn)*timeGap;
 }
@@ -246,7 +260,7 @@ float AV4Wheel2::_getAdjustment(){
 
 // adjust servo based on base angle for serve
 void AV4Wheel2::_adjustServo(int baseAngle){
-	_steeringServo.write(baseAngle - (_pidRunning ? _getAdjustment() : 0));
+	_steeringServo.write(baseAngle - (_pidRunning ? constrain(_getAdjustment(), _uMin, _uMax) : 0));
 }
 
 // compass code
@@ -279,6 +293,11 @@ void AV4Wheel2::resetInterruptTicks(){
 // get the Interupt ticks
 int AV4Wheel2::getInterrupTicks(){
     return _interruptTickCounter;
+}
+
+float AV4Wheel2::getInterruptDist(){
+	// ticks   /   ticks per rotation   * distance per rotation
+	return 1.0*_interruptTickCounter/TICKS_PER_ROTATION*_wheelCircumfrence;
 }
 
 // Test the encoder interrupt function
