@@ -9,6 +9,13 @@ int buttonPin = 8;
 
 int servoCent = 96;
 
+int addAngle = 25;
+int subAngle = 22;
+
+int maxSpeed = 100;
+
+boolean moveAround = false;
+
 void setup(){
     // Parameters: Motor A dirn pin, Motor A speed pin, Motor B dirn pin, Motor B speed pin, 
     // 			   Steering Servo pin, Wheel Circumfrenc (in inches)
@@ -31,12 +38,19 @@ void loop(){
   if(digitalRead(buttonPin) == LOW){
 	// ramp up
 	// start speed, final speed, delay, steps, motor direction, servo angle
-	test.rampMotion(0, 100, 20, 1, HIGH, servoCent);
+	test.rampMotion(0, maxSpeed, 20, 1, HIGH, servoCent);
 	
-    test.moveUltra(100, 1, servoCent, 54, 1);
+    test.moveUltra(maxSpeed, 1, servoCent, 54, 1);
+
+    if(moveAround){
+      test.moveDist(5.0*12.0, HIGH, maxSpeed, servoCent+addAngle);
+      test.moveDist(10.0*12.0, HIGH, maxSpeed, servoCent-subAngle);
+      test.moveDist(5.0*12.0, HIGH, maxSpeed, servoCent+addAngle);
+        
+    }
 
 	// ramp down
-	test.rampMotion(100, 0, 20, 1, HIGH, servoCent);
+	test.rampMotion(maxSpeed, 0, 20, 1, HIGH, servoCent);
   }
 }
 
