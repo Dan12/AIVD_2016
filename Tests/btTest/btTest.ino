@@ -46,7 +46,10 @@ void setup() {
 
 void loop() { // run over and over
   if (mySerial.available()) {
-    Serial.write(mySerial.read());
+    int inByte = mySerial.read();
+    Serial.write(inByte);
+    if(inByte == 44)
+      Serial.println();
   }
   if (Serial.available()) {
     mySerial.write(Serial.read());

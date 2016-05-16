@@ -42,13 +42,10 @@ void loop(){
 
     //fwd till begin of first car
 		car.moveUltra(maxSpeed, HIGH, servoCent, 24, 1);
-    Serial.println("Hey1");
 		//fwd util end of first car
 		car.moveUltra(maxSpeed, HIGH, servoCent, 30, 0);
-    Serial.println("Hey2");
 		//fwd util begining of second car and slow down
 		car.moveUltra(maxSpeed, HIGH, servoCent, 24, 1);
-    Serial.println("Hey3");
 		car.rampMotion(maxSpeed, 0, 20, 1, HIGH, servoCent);
 		
 		// set servo to back
