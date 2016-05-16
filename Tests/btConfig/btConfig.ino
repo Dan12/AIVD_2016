@@ -1,7 +1,7 @@
 #define ROBOT_NAME "RandomBot"
 
 // If you haven't configured your device before use this
-#define BLUETOOTH_SPEED 57600
+#define BLUETOOTH_SPEED 38400
 // If you are modifying your existing configuration, use this:
 // #define BLUETOOTH_SPEED 57600
 
@@ -58,7 +58,7 @@ void setup()
 //  waitForResponse();
 
   // Set baudrate to 57600
-  mySerial.print("AT+BAUD6");
+  mySerial.print("AT+BAUD7");
   waitForResponse();
 
   Serial.println("Done!");
