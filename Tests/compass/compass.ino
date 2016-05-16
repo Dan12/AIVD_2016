@@ -10,6 +10,8 @@ AV4Wheel2 test;
 
 LSM303 compass;
 
+int angleTrim = 77;
+
 void setup() {
   Serial.begin(9600);
   Wire.begin();
@@ -22,8 +24,8 @@ void setup() {
   program to determine appropriate values for your particular unit.
   */
   
-  compass.m_min = (LSM303::vector<int16_t>){-579, -651, -706};
-  compass.m_max = (LSM303::vector<int16_t>){712, 629, 594};
+  compass.m_min = (LSM303::vector<int16_t>){-673, -754, -855};
+  compass.m_max = (LSM303::vector<int16_t>){754, 708, 533};
   //compass.m_min = (LSM303::vector<int16_t>){-32767, -32767, -32767};
   //compass.m_max = (LSM303::vector<int16_t>){+32767, +32767, +32767};
   
@@ -36,7 +38,7 @@ void setup() {
 void loop() {
   compass.read();
     
-    float heading = compass.heading();
+    int heading = ((int)compass.heading()+angleTrim)%360;
     
     Serial.print("Heading: ");
     Serial.println(heading);

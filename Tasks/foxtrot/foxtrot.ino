@@ -9,10 +9,10 @@ SoftwareSerial bluetooth(TxD, RxD);
 
 AV4Wheel2 car;
 
-const int servoCent = 97;
+const int servoCent = 103;
 const int addAngle = 21;
 const int subAngle = 25.5;
-const int maxSpeed = 80;
+const int maxSpeed = 100;
 const int exaggerate = 2;
 
 int maxDistance = 200;
@@ -47,6 +47,9 @@ delay(100);
   //Parameters: Trigger Pin, Echo Pin, Max Distance (cm)
 
   pinMode(buttonPin, INPUT_PULLUP);
+
+  // Attach interrupt on pin 2
+  attachInterrupt(0, interruptFunc, RISING);
 }
 
 void loop()
@@ -58,27 +61,37 @@ void loop()
       int data2 = bluetooth.parseInt();
       int data3 = bluetooth.parseInt();
       curColor = data2;
+      Serial.println(curColor);
     }
     // number 1 (green)
     if(curColor == 0){
-      if(speedAt != maxSpeed){
-        car.rampMotion(speedAt,maxSpeed,20,1,HIGH,servoCent);
-        speedAt = maxSpeed;
-      }
+      //if(speedAt != maxSpeed){
+        car.setServo(servoCent);
+        //car.rampMotion(speedAt,maxSpeed,20,1,HIGH,servoCent);
+        //speedAt = maxSpeed;
+      //}
     }
     // number 2 (yellow)
     else if(curColor == 1){
-      if(speedAt != maxSpeed/2){
-        car.rampMotion(speedAt,maxSpeed/2,20,1,HIGH,servoCent);
-        speedAt = maxSpeed/2;
-      }
+      car.setServo(servoCent+25);
+      car.moveDist(3*12.0, 1, speedAt, servoCent+31);
+      car.moveDist(1*12.0, 1, speedAt, servoCent);
+      car.setServo(servoCent);
+//      if(speedAt != maxSpeed/2){
+//        car.rampMotion(speedAt,maxSpeed/2,20,1,HIGH,servoCent);
+//        speedAt = maxSpeed/2;
+//      }
     }
     // number 3 (red)
     else if(curColor == 2){
-      if(speedAt != 0){
-        car.rampMotion(speedAt,0,20,1,HIGH,servoCent);
-        speedAt = 0;
-      }
+      car.setServo(servoCent-27);
+      car.moveDist(4.0*12.0, 1, speedAt, servoCent-27);
+      car.moveDist(1*12.0, 1, speedAt, servoCent);
+       car.setServo(servoCent);
+      //if(speedAt != 0){
+        //car.rampMotion(speedAt,0,20,1,HIGH,servoCent);
+        //speedAt = 0;
+      //}
     }
     if(canStop && digitalRead(buttonPin) == LOW){
       car.rampMotion(speedAt,0,20,1,HIGH,servoCent);
@@ -92,9 +105,14 @@ void loop()
   }
   else{
       if(digitalRead(buttonPin) == LOW){
-        car.rampMotion(0,maxSpeed/3,20,1,HIGH,servoCent);
-        speedAt = maxSpeed/3; 
+        car.rampMotion(0,maxSpeed,20,1,HIGH,servoCent);
+        speedAt = maxSpeed; 
         starting = true; 
       }
   }
+}
+
+  // need this because interrupt function has to be of void(*)()
+void interruptFunc() {
+  car.interrupEncoderFunc();
 }

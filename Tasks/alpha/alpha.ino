@@ -10,7 +10,7 @@ AV4Wheel2 test;
 
 int buttonPin = 8;
 
-int servoCent = 96;
+int servoCent = 103;
 
 LSM303 compass;
 
@@ -43,17 +43,20 @@ void setup(){
 
 void loop(){
 	if(digitalRead(buttonPin) == LOW){
+     delay(5500);
 		// ramp up
 		// start speed, final speed, delay, steps, motor direction, servo angle
-		compass.read();
-		test.setPIDHeading(compass.heading());
+		//compass.read();
+		//test.setPIDHeading(compass.heading());
 
 		test.rampMotion(0, 125, 20, 1, HIGH, servoCent);
 
-		test.startPID(true);
-		test.moveDist(12.5*12.0, 1, 125, servoCent);
-		test.stopPID();
-		test.viewPID();
+		//test.startPID(true);
+		test.moveDist(7.7*12.0, 1, 125, servoCent);
+    test.moveDist(7.5*12.0, 1, 125, servoCent-27);
+    test.moveDist(3.6*12.0, 1, 125, servoCent);
+		//test.stopPID();
+		//test.viewPID();
 
 		// ramp down
 		test.rampMotion(125, 0, 20, 1, HIGH, servoCent+2);

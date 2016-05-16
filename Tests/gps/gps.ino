@@ -25,6 +25,7 @@ void setup()
 void loop()
 {
   float flat, flon;
+  long unsigned int age;
 
   gps.f_get_position(&flat, &flon, &age);
   print_float(flat, TinyGPS::GPS_INVALID_F_ANGLE, 10, 6);
